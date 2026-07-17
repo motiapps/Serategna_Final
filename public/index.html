@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a7a4a" />
+  <meta name="description" content="Serategna — local development preview" />
+  <title>Serategna · Local Dev</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="app-bar">
+    <h1>Serategna <span class="amharic">ሰራተኛ</span></h1>
+    <span id="conn-badge" class="badge badge-pending">checking…</span>
+  </header>
+
+  <main class="content">
+    <section class="card hero">
+      <h2>Mobile localhost is live 🎉</h2>
+      <p>
+        You are viewing the Serategna development server. This page is served
+        from your machine and is reachable from emulators and phones on the
+        same network.
+      </p>
+    </section>
+
+    <section class="card">
+      <h3>Connection details</h3>
+      <dl class="details">
+        <div><dt>Opened as</dt><dd id="detail-origin">—</dd></div>
+        <div><dt>Server health</dt><dd id="detail-health">—</dd></div>
+        <div><dt>Screen</dt><dd id="detail-screen">—</dd></div>
+        <div><dt>User agent</dt><dd id="detail-ua" class="wrap">—</dd></div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h3>How to open on a device</h3>
+      <ul class="steps">
+        <li><strong>This machine:</strong> <code>http://localhost:3000</code></li>
+        <li><strong>Android emulator:</strong> <code>http://10.0.2.2:3000</code></li>
+        <li><strong>iOS simulator:</strong> <code>http://localhost:3000</code></li>
+        <li><strong>Phone on same Wi-Fi:</strong> use the LAN URL printed in the terminal</li>
+        <li><strong>Android over USB:</strong> <code>adb reverse tcp:3000 tcp:3000</code></li>
+      </ul>
+    </section>
+  </main>
+
+  <nav class="tab-bar" aria-label="Preview navigation">
+    <button class="tab active" type="button">Home</button>
+    <button class="tab" type="button">Jobs</button>
+    <button class="tab" type="button">Workers</button>
+    <button class="tab" type="button">Profile</button>
+  </nav>
+
+  <script src="/app.js"></script>
+</body>
+</html>

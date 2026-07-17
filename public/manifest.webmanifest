@@ -1,0 +1,10 @@
+{
+  "name": "Serategna",
+  "short_name": "Serategna",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f5",
+  "theme_color": "#1a7a4a",
+  "description": "Serategna local development preview",
+  "icons": []
+}
