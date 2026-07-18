@@ -16,6 +16,7 @@ const qr = require("./qr");
 const PORT = Number(process.argv[2] || process.env.PORT || 3000);
 const HOST = process.env.HOST || "0.0.0.0";
 const PUBLIC_DIR = path.join(__dirname, "public");
+const MVP_DIR = path.join(__dirname, "mvp");
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -112,20 +113,34 @@ const server = http.createServer((req, res) => {
   }
 
   const requestPath = decodeURIComponent((req.url || "/").split("?")[0]);
-  const safePath = path
-    .normalize(requestPath)
-    .replace(/^(\.\.[\/\\])+/, "");
-  let filePath = path.join(PUBLIC_DIR, safePath);
 
-  // Prevent path traversal outside the public directory.
-  if (!filePath.startsWith(PUBLIC_DIR)) {
+  // The MVP app lives under /mvp/ and uses relative asset paths, so make
+  // sure the bare /mvp URL gets a trailing slash.
+  if (requestPath === "/mvp") {
+    res.writeHead(301, { Location: "/mvp/" });
+    res.end();
+    return;
+  }
+
+  let rootDir = PUBLIC_DIR;
+  let relPath = requestPath;
+  if (requestPath.startsWith("/mvp/")) {
+    rootDir = MVP_DIR;
+    relPath = requestPath.slice("/mvp".length);
+  }
+
+  const safePath = path.normalize(relPath).replace(/^(\.\.[\/\\])+/, "");
+  let filePath = path.join(rootDir, safePath);
+
+  // Prevent path traversal outside the served directory.
+  if (!filePath.startsWith(rootDir)) {
     res.writeHead(403);
     res.end("Forbidden");
     return;
   }
 
-  if (requestPath === "/" || requestPath === "") {
-    filePath = path.join(PUBLIC_DIR, "index.html");
+  if (relPath === "/" || relPath === "") {
+    filePath = path.join(rootDir, "index.html");
   }
 
   fs.stat(filePath, (err, stats) => {
@@ -136,7 +151,7 @@ const server = http.createServer((req, res) => {
     fs.readFile(filePath, (readErr, data) => {
       if (readErr) {
         // SPA-style fallback: unknown routes serve the app shell.
-        fs.readFile(path.join(PUBLIC_DIR, "index.html"), (fallbackErr, shell) => {
+        fs.readFile(path.join(rootDir, "index.html"), (fallbackErr, shell) => {
           if (fallbackErr) {
             res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
             res.end("404 Not Found");

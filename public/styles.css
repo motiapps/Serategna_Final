@@ -103,6 +103,17 @@ body {
   line-height: 1.5;
 }
 
+.cta {
+  display: inline-block;
+  background: var(--green);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+}
+
 .card h3 {
   font-size: 1rem;
   margin-bottom: 0.75rem;

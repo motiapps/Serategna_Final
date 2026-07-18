@@ -1,6 +1,22 @@
 # Serategna_Final
 
-Serategna (ሰራተኛ) mobile app — local development server.
+Serategna (ሰራተኛ) mobile app — MVP and local development server.
+
+## The MVP
+
+The **[`mvp/`](mvp/)** folder contains the complete Phase 1 MVP — a
+mobile-first app for finding and hiring trusted workers (cleaning, plumbing,
+childcare, tutoring, and more). Phase 1 features all work; later-phase
+features (chat, payments, verification, Amharic interface, …) are visible in
+the UI marked **"Soon"** so the full product picture is on display.
+
+- Run `npm start` and open **`http://localhost:3000/mvp/`** (or scan the QR
+  code printed in the terminal, then tap "Open the Serategna MVP").
+- Or open `mvp/index.html` directly — it's fully self-contained.
+- See [`mvp/README.md`](mvp/README.md) for a guide aimed at both end users
+  and technical reviewers, plus the roadmap.
+
+## The dev server
 
 This repo includes a zero-dependency Node.js localhost server that serves a
 mobile-first app shell, reachable from your machine, emulators, and phones on
@@ -47,6 +63,11 @@ Notes:
 ```
 server.js                   # zero-dependency static server (binds 0.0.0.0)
 qr.js                       # zero-dependency QR encoder (terminal + SVG)
+mvp/                        # Phase 1 MVP app (see mvp/README.md)
+  index.html                # app shell: tabs, sheets, toast
+  styles.css                # mobile-first styles
+  data.js                   # demo dataset + "Soon" feature registry
+  app.js                    # tab router, renderers, search, event handling
 public/
   index.html                # mobile-first app shell
   styles.css                # mobile-first styles (light/dark, safe areas)

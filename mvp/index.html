@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a7a4a" />
+  <meta name="description" content="Serategna MVP — find trusted workers, post jobs" />
+  <title>Serategna · MVP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-bar">
+    <h1>Serategna <span class="amharic">ሰራተኛ</span></h1>
+    <span class="badge badge-mvp">MVP · Phase 1</span>
+  </header>
+
+  <main id="view-home" class="view"></main>
+  <main id="view-jobs" class="view"></main>
+  <main id="view-workers" class="view"></main>
+  <main id="view-profile" class="view"></main>
+
+  <nav class="tab-bar" aria-label="Main navigation">
+    <button class="tab" data-tab="home" type="button"><span>🏠</span>Home</button>
+    <button class="tab" data-tab="jobs" type="button"><span>🧰</span>Jobs</button>
+    <button class="tab" data-tab="workers" type="button"><span>👷</span>Workers</button>
+    <button class="tab" data-tab="profile" type="button"><span>👤</span>Profile</button>
+  </nav>
+
+  <div id="backdrop" class="backdrop hidden">
+    <div id="sheet" class="sheet" role="dialog" aria-modal="true"></div>
+  </div>
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
