@@ -11,6 +11,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
+const qr = require("./qr");
 
 const PORT = Number(process.argv[2] || process.env.PORT || 3000);
 const HOST = process.env.HOST || "0.0.0.0";
@@ -45,11 +46,68 @@ function lanAddresses() {
   return addresses;
 }
 
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function qrPage(port) {
+  const lan = lanAddresses();
+  const url = lan.length
+    ? `http://${lan[0]}:${port}`
+    : `http://localhost:${port}`;
+  let svg;
+  try {
+    svg = qr.toSvg(qr.encode(url));
+  } catch (err) {
+    svg = `<p>Could not generate QR code: ${escapeHtml(err.message)}</p>`;
+  }
+  const note = lan.length
+    ? "Scan with a phone on the same Wi-Fi network."
+    : "No LAN address found — this QR points at localhost and only works on this machine.";
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Serategna · Scan to open</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #f4f6f5; color: #1c2422;
+         display: flex; flex-direction: column; align-items: center; justify-content: center;
+         min-height: 100vh; margin: 0; padding: 1rem; text-align: center; }
+  .qr { width: min(75vmin, 420px); background: #fff; border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 8px; }
+  .qr svg { display: block; width: 100%; height: auto; }
+  code { font-size: 1.05rem; background: #fff; border: 1px solid #e0e6e3;
+         border-radius: 8px; padding: 0.3rem 0.7rem; }
+  p { color: #5c6b66; }
+</style>
+</head>
+<body>
+<h1>Serategna</h1>
+<div class="qr">${svg}</div>
+<p>${note}</p>
+<code>${escapeHtml(url)}</code>
+</body>
+</html>`;
+}
+
 const server = http.createServer((req, res) => {
   // Simple health endpoint for tooling and connectivity checks.
   if (req.url === "/health") {
     res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
     res.end(JSON.stringify({ status: "ok", time: new Date().toISOString() }));
+    return;
+  }
+
+  // QR page: open on this machine and scan it with a phone.
+  if ((req.url || "").split("?")[0] === "/qr") {
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(qrPage(PORT));
     return;
   }
 
@@ -109,15 +167,25 @@ server.listen(PORT, HOST, () => {
     `  Android emulator: http://10.0.2.2:${PORT}`,
     `  iOS simulator:    http://localhost:${PORT}`,
   ];
-  for (const address of lanAddresses()) {
+  const lan = lanAddresses();
+  for (const address of lan) {
     lines.push(`  On your network:  http://${address}:${PORT}  (phone on same Wi-Fi)`);
   }
   lines.push(
     "",
     `  USB device (Android): adb reverse tcp:${PORT} tcp:${PORT}  then open http://localhost:${PORT}`,
+    `  QR page:              http://localhost:${PORT}/qr`,
     "  Press Ctrl+C to stop.",
     ""
   );
+  if (lan.length) {
+    const url = `http://${lan[0]}:${PORT}`;
+    try {
+      lines.push(`  Scan to open ${url} on your phone:`, "", qr.toTerminal(qr.encode(url)), "");
+    } catch (err) {
+      // QR is a convenience; never block startup on it.
+    }
+  }
   console.log(lines.join("\n"));
 });
 
